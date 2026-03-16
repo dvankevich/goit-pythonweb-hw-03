@@ -30,7 +30,7 @@ class HttpHandler(BaseHTTPRequestHandler):
               'message': data_dict.get('message')
           }
           
-          print(json_data)
+          # print(json_data)
 
           # save data
           with open('storage/data.json', 'w') as file:
