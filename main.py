@@ -4,7 +4,9 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 import urllib.parse
 import json
 import datetime
+import threading
 
+lock = threading.Lock()
 
 class HttpHandler(BaseHTTPRequestHandler):
     def do_POST(self):
@@ -14,24 +16,25 @@ class HttpHandler(BaseHTTPRequestHandler):
         
         timestamp = datetime.datetime.now().isoformat()
 
-        # Load existing data
-        try:
-            with open('storage/data.json', 'r') as file:
-                json_data = json.load(file)
-        except FileNotFoundError:
-            json_data = {}
+        with lock:
+          # Load existing data
+          try:
+              with open('storage/data.json', 'r') as file:
+                  json_data = json.load(file)
+          except FileNotFoundError:
+              json_data = {}
 
-        # Add new record
-        json_data[timestamp] = {
-            'username': data_dict.get('username'),
-            'message': data_dict.get('message')
-        }
-        
-        print(json_data)
+          # Add new record
+          json_data[timestamp] = {
+              'username': data_dict.get('username'),
+              'message': data_dict.get('message')
+          }
+          
+          print(json_data)
 
-        # save data
-        with open('storage/data.json', 'w') as file:
-            json.dump(json_data, file, indent=2)
+          # save data
+          with open('storage/data.json', 'w') as file:
+              json.dump(json_data, file, indent=2)
 
         self.send_response(302)
         self.send_header('Location', '/')
