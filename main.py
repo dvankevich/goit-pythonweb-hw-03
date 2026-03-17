@@ -12,35 +12,35 @@ env = Environment(loader=FileSystemLoader('.'))
 
 class HttpHandler(BaseHTTPRequestHandler):
     def do_POST(self):
-        data = self.rfile.read(int(self.headers['Content-Length']))
-        data_parse = urllib.parse.unquote_plus(data.decode())
-        data_dict = {key: value for key, value in [el.split('=') for el in data_parse.split('&')]}
-        
-        timestamp = datetime.datetime.now().isoformat()
+      data = self.rfile.read(int(self.headers['Content-Length']))
+      data_parse = urllib.parse.unquote_plus(data.decode())
+      data_dict = {key: value for key, value in [el.split('=') for el in data_parse.split('&')]}
 
-        with lock:
-          # Load existing data
-          try:
-              with open('storage/data.json', 'r') as file:
-                  json_data = json.load(file)
-          except FileNotFoundError:
-              json_data = {}
+      timestamp = datetime.datetime.now().isoformat()
 
-          # Add new record
-          json_data[timestamp] = {
-              'username': data_dict.get('username'),
-              'message': data_dict.get('message')
-          }
-          
-          # print(json_data)
+      with lock:
+        # Load existing data
+        try:
+            with open('storage/data.json', 'r') as file:
+                json_data = json.load(file)
+        except FileNotFoundError:
+            json_data = {}
 
-          # save data
-          with open('storage/data.json', 'w') as file:
-              json.dump(json_data, file, indent=2)
+        # Add new record
+        json_data[timestamp] = {
+            'username': data_dict.get('username'),
+            'message': data_dict.get('message')
+        }
 
-        self.send_response(302)
-        self.send_header('Location', '/')
-        self.end_headers()
+        # print(json_data)
+
+        # save data
+        with open('storage/data.json', 'w') as file:
+            json.dump(json_data, file, indent=2)
+
+      self.send_response(302)
+      self.send_header('Location', '/')
+      self.end_headers()
 
     def do_GET(self):
         pr_url = urllib.parse.urlparse(self.path)
@@ -56,6 +56,7 @@ class HttpHandler(BaseHTTPRequestHandler):
             else:
                 self.send_html_file('error.html', 404)
 
+
     def send_html_file(self, filename, status=200):
         self.send_response(status)
         self.send_header('Content-type', 'text/html')
@@ -69,10 +70,10 @@ class HttpHandler(BaseHTTPRequestHandler):
         content_type = mt[0] if mt[0] is not None else 'text/plain'
         self.send_header("Content-type", content_type)
         self.end_headers()
-        
+
         with open(f'.{self.path}', 'rb') as file:
             self.wfile.write(file.read())
-            
+
     def send_messages(self):
         # Зчитування даних з файлу data.json
         with lock:
