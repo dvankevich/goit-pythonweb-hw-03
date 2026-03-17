@@ -5,8 +5,10 @@ import urllib.parse
 import json
 import datetime
 import threading
+from jinja2 import Environment, FileSystemLoader
 
 lock = threading.Lock()
+env = Environment(loader=FileSystemLoader('.'))
 
 class HttpHandler(BaseHTTPRequestHandler):
     def do_POST(self):
@@ -44,6 +46,8 @@ class HttpHandler(BaseHTTPRequestHandler):
         pr_url = urllib.parse.urlparse(self.path)
         if pr_url.path == '/':
             self.send_html_file('index.html')
+        elif pr_url.path == '/read':
+            self.send_messages()
         elif pr_url.path == '/message':
             self.send_html_file('message.html')
         else:
@@ -68,6 +72,25 @@ class HttpHandler(BaseHTTPRequestHandler):
         
         with open(f'.{self.path}', 'rb') as file:
             self.wfile.write(file.read())
+            
+    def send_messages(self):
+        # Зчитування даних з файлу data.json
+        with lock:
+            try:
+                with open('storage/data.json', 'r') as file:
+                    json_data = json.load(file)
+            except FileNotFoundError:
+                json_data = {}
+
+        # Рендер шаблону з даними
+        template = env.get_template('readmsg.html')
+        output = template.render(messages=json_data)
+
+        # Відправка HTML-відповіді
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+        self.wfile.write(output.encode('utf-8'))
 
 
 def run(server_class=HTTPServer, handler_class=HttpHandler):
