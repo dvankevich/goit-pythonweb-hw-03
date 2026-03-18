@@ -9,6 +9,7 @@ from jinja2 import Environment, FileSystemLoader
 
 lock = threading.Lock()
 env = Environment(loader=FileSystemLoader('.'))
+datafile = 'storage/data.json'
 
 class HttpHandler(BaseHTTPRequestHandler):
     def do_POST(self):
@@ -21,7 +22,7 @@ class HttpHandler(BaseHTTPRequestHandler):
       with lock:
         # Load existing data
         try:
-            with open('storage/data.json', 'r') as file:
+            with open(datafile, 'r') as file:
                 json_data = json.load(file)
         except FileNotFoundError:
             json_data = {}
@@ -35,7 +36,7 @@ class HttpHandler(BaseHTTPRequestHandler):
         # print(json_data)
 
         # save data
-        with open('storage/data.json', 'w') as file:
+        with open(datafile, 'w') as file:
             json.dump(json_data, file, indent=2)
 
       self.send_response(302)
@@ -78,7 +79,7 @@ class HttpHandler(BaseHTTPRequestHandler):
         # Зчитування даних з файлу data.json
         with lock:
             try:
-                with open('storage/data.json', 'r') as file:
+                with open(datafile, 'r') as file:
                     json_data = json.load(file)
             except FileNotFoundError:
                 json_data = {}
