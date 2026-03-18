@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -20,7 +20,7 @@
         aria-label="Second navbar example"
       >
         <div class="container-fluid">
-          <a class="navbar-brand" href="#">
+          <a class="navbar-brand" href="/">
             <img src="/logo.png" alt="logo" />
           </a>
           <div class="collapse navbar-collapse" id="navbarsExample02">
@@ -30,6 +30,9 @@
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#">Send message</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/read">Read messages</a>
               </li>
             </ul>
           </div>
@@ -43,12 +46,21 @@
 
           <div class="row mb-3">
             <label for="floatingInput">Your nickname</label>
-            <input type="text" class="form-control" id="floatingInput" name="username"/>
+            <input
+              type="text"
+              class="form-control"
+              id="floatingInput"
+              name="username"
+            />
           </div>
 
           <div class="row mb-3 h-100">
             <label for="floatingTextarea">Message</label>
-            <textarea class="form-control" id="floatingTextarea" name="message"></textarea>
+            <textarea
+              class="form-control"
+              id="floatingTextarea"
+              name="message"
+            ></textarea>
           </div>
 
           <button class="w-100 btn btn-lg btn-primary" type="submit">
