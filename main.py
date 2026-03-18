@@ -15,7 +15,7 @@ class HttpHandler(BaseHTTPRequestHandler):
     def do_POST(self):
       data = self.rfile.read(int(self.headers['Content-Length']))
       data_parse = urllib.parse.unquote_plus(data.decode())
-      data_dict = {key: value for key, value in [el.split('=') for el in data_parse.split('&')]}
+      data_dict = dict(urllib.parse.parse_qsl(data_parse, keep_blank_values=True))
 
       timestamp = datetime.datetime.now().isoformat()
 
